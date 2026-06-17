@@ -1,0 +1,30 @@
+# Unity generated files
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+*.csproj
+*.sln
+*.user
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+
+# Unity cache and crash reports
+[Mm]emoryCaptures/
+[Rr]ecordings/
+sysinfo.txt
+*.stackdump
+
+# OS files
+.DS_Store
+Thumbs.db
