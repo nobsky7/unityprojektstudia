@@ -492,13 +492,13 @@ namespace AutoParking
             }
 
             sceneCamera.orthographic = true;
-            sceneCamera.orthographicSize = size * 0.62f;
-            Vector3 focus = new Vector3(position.x, 0f, position.z);
-            sceneCamera.transform.position = focus + new Vector3(0f, size * 1.15f, -size * 0.45f);
+            sceneCamera.orthographicSize = size * 0.74f;
+            Vector3 focus = new Vector3(position.x, 0f, position.z - 1.4f);
+            sceneCamera.transform.position = focus + new Vector3(0f, size * 1.55f, -size * 0.28f);
             sceneCamera.transform.LookAt(focus);
             sceneCamera.useOcclusionCulling = false;
             sceneCamera.nearClipPlane = 0.1f;
-            sceneCamera.farClipPlane = 160f;
+            sceneCamera.farClipPlane = 220f;
         }
 
         private static void EnsureLight()
@@ -770,6 +770,8 @@ namespace AutoParking
             Cube(root, "Rear window", new Vector3(0f, 1.13f, -dimensions.Length * 0.31f), Quaternion.identity, new Vector3(dimensions.Width * 0.52f, 0.08f, dimensions.Length * 0.12f), glass, false);
             Cube(root, "Headlights", new Vector3(0f, 0.58f, dimensions.Length * 0.51f), Quaternion.identity, new Vector3(dimensions.Width * 0.58f, 0.14f, 0.08f), headLight, false);
             Cube(root, "Tail lights", new Vector3(0f, 0.58f, -dimensions.Length * 0.51f), Quaternion.identity, new Vector3(dimensions.Width * 0.58f, 0.14f, 0.08f), tailLight, false);
+            Cube(root, "Front sensor strip", new Vector3(0f, 0.76f, dimensions.Length * 0.47f), Quaternion.identity, new Vector3(dimensions.Width * 0.5f, 0.08f, 0.06f), glass, false);
+            Cube(root, "Rear sensor strip", new Vector3(0f, 0.76f, -dimensions.Length * 0.47f), Quaternion.identity, new Vector3(dimensions.Width * 0.5f, 0.08f, 0.06f), glass, false);
 
             float wheelZ = dimensions.WheelBase * 0.5f;
             float wheelX = dimensions.TrackWidth * 0.5f;
@@ -816,6 +818,11 @@ namespace AutoParking
             {
                 collider.enabled = false;
             }
+
+            Cube(root, objectName + " ring north", position + new Vector3(0f, 0.015f, 0.56f), Quaternion.identity, new Vector3(1.25f, 0.025f, 0.08f), material, false);
+            Cube(root, objectName + " ring south", position + new Vector3(0f, 0.015f, -0.56f), Quaternion.identity, new Vector3(1.25f, 0.025f, 0.08f), material, false);
+            Cube(root, objectName + " ring east", position + new Vector3(0.56f, 0.015f, 0f), Quaternion.identity, new Vector3(0.08f, 0.025f, 1.25f), material, false);
+            Cube(root, objectName + " ring west", position + new Vector3(-0.56f, 0.015f, 0f), Quaternion.identity, new Vector3(0.08f, 0.025f, 1.25f), material, false);
         }
 
         private static void Wheel(Transform root, string objectName, Vector3 localPosition, Material material)
