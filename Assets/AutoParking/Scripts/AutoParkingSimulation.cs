@@ -492,12 +492,13 @@ namespace AutoParking
             }
 
             sceneCamera.orthographic = true;
-            sceneCamera.orthographicSize = size * 0.56f;
-            sceneCamera.transform.position = new Vector3(position.x, size, position.z);
-            sceneCamera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            sceneCamera.orthographicSize = size * 0.62f;
+            Vector3 focus = new Vector3(position.x, 0f, position.z);
+            sceneCamera.transform.position = focus + new Vector3(0f, size * 1.15f, -size * 0.45f);
+            sceneCamera.transform.LookAt(focus);
             sceneCamera.useOcclusionCulling = false;
             sceneCamera.nearClipPlane = 0.1f;
-            sceneCamera.farClipPlane = 100f;
+            sceneCamera.farClipPlane = 160f;
         }
 
         private static void EnsureLight()
@@ -758,8 +759,24 @@ namespace AutoParking
 
         private static void BuildCarVisual(Transform root, VehicleDimensions dimensions, Material bodyMaterial, bool brightDetails)
         {
+            Material glass = NewRuntimeMaterial("AgentGlass", new Color(0.18f, 0.34f, 0.46f));
+            Material tire = NewRuntimeMaterial("AgentTire", Color.black);
+            Material headLight = NewRuntimeMaterial("AgentHeadlight", new Color(1f, 0.93f, 0.62f));
+            Material tailLight = NewRuntimeMaterial("AgentTaillight", new Color(0.82f, 0.03f, 0.02f));
+
             Cube(root, "Car body", new Vector3(0f, 0.42f, 0f), Quaternion.identity, new Vector3(dimensions.Width, 0.72f, dimensions.Length), bodyMaterial, false);
             Cube(root, "Car cabin", new Vector3(0f, 0.9f, -0.15f), Quaternion.identity, new Vector3(dimensions.Width * 0.72f, 0.42f, dimensions.Length * 0.42f), bodyMaterial, false);
+            Cube(root, "Windshield", new Vector3(0f, 1.13f, dimensions.Length * 0.1f), Quaternion.identity, new Vector3(dimensions.Width * 0.54f, 0.08f, dimensions.Length * 0.16f), glass, false);
+            Cube(root, "Rear window", new Vector3(0f, 1.13f, -dimensions.Length * 0.31f), Quaternion.identity, new Vector3(dimensions.Width * 0.52f, 0.08f, dimensions.Length * 0.12f), glass, false);
+            Cube(root, "Headlights", new Vector3(0f, 0.58f, dimensions.Length * 0.51f), Quaternion.identity, new Vector3(dimensions.Width * 0.58f, 0.14f, 0.08f), headLight, false);
+            Cube(root, "Tail lights", new Vector3(0f, 0.58f, -dimensions.Length * 0.51f), Quaternion.identity, new Vector3(dimensions.Width * 0.58f, 0.14f, 0.08f), tailLight, false);
+
+            float wheelZ = dimensions.WheelBase * 0.5f;
+            float wheelX = dimensions.TrackWidth * 0.5f;
+            Wheel(root, "Wheel FL", new Vector3(-wheelX, 0.28f, wheelZ), tire);
+            Wheel(root, "Wheel FR", new Vector3(wheelX, 0.28f, wheelZ), tire);
+            Wheel(root, "Wheel RL", new Vector3(-wheelX, 0.28f, -wheelZ), tire);
+            Wheel(root, "Wheel RR", new Vector3(wheelX, 0.28f, -wheelZ), tire);
         }
 
         private static GameObject Cube(Transform root, string objectName, Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool colliderEnabled)
