@@ -10,6 +10,17 @@ using UnityEngine.InputSystem.UI;
 
 namespace AutoParking
 {
+    public sealed class AutoParkingSimulation : MonoBehaviour
+    {
+        private void Awake()
+        {
+            if (GetComponent<ParkingSimulation>() == null)
+            {
+                gameObject.AddComponent<ParkingSimulation>();
+            }
+        }
+    }
+
     public enum ParkingScenario
     {
         Perpendicular = 0,
@@ -117,6 +128,11 @@ namespace AutoParking
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void CreateSimulationIfMissing()
         {
+            if (UnityEngine.Object.FindAnyObjectByType<AutoParkingSimulation>() != null)
+            {
+                return;
+            }
+
             if (UnityEngine.Object.FindAnyObjectByType<ParkingSimulation>() != null)
             {
                 return;
