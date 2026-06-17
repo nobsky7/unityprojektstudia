@@ -520,6 +520,9 @@ namespace AutoParking
     public static class ParkingEnvironmentBuilder
     {
         private const float GroundY = -0.05f;
+        private const float LineY = 0.065f;
+        private const float LineHeight = 0.045f;
+        private static Material shadowMaterial;
 
         public static ParkingProfile BuildPerpendicularMap(
             Transform root,
@@ -609,7 +612,7 @@ namespace AutoParking
 
             for (int i = 0; i < 22; i++)
             {
-                Cube(root, "Center dash " + i, new Vector3(-21f + i * 2f, 0.01f, 1.55f), Quaternion.identity, new Vector3(1f, 0.02f, 0.05f), lines, false);
+                Cube(root, "Center dash " + i, new Vector3(-21f + i * 2f, LineY, 1.55f), Quaternion.identity, new Vector3(1f, LineHeight, 0.07f), lines, false);
             }
 
             Vector3 parallelTargetPosition = new Vector3(9.6f, 0.05f, -3.05f);
@@ -728,6 +731,7 @@ namespace AutoParking
             car.AddComponent<ParkingSensorRig>();
             car.AddComponent<ParkingAgent>();
 
+            Cube(car.transform, "Soft shadow", new Vector3(0.16f, -0.035f, -0.16f), Quaternion.identity, new Vector3(dimensions.Width * 1.05f, 0.018f, dimensions.Length * 1.04f), GetShadowMaterial(), false);
             BuildCarVisual(car.transform, dimensions, material, true);
 
             return car;
@@ -738,23 +742,35 @@ namespace AutoParking
             float startX = -13.05f;
             for (int i = 0; i <= count; i++)
             {
-                Cube(root, "Slot separator " + z + " " + i, new Vector3(startX + i * 3.1f, 0.01f, z), Quaternion.identity, new Vector3(0.08f, 0.02f, 5.4f), lines, false);
+                Cube(root, "Slot separator " + z + " " + i, new Vector3(startX + i * 3.1f, LineY, z), Quaternion.identity, new Vector3(0.11f, LineHeight, 5.4f), lines, false);
             }
 
             float endZ = south ? -3.3f : 3.3f;
-            Cube(root, "Slot front line " + z, new Vector3(-0.65f, 0.01f, endZ), Quaternion.identity, new Vector3(count * 3.1f, 0.02f, 0.08f), lines, false);
+            Cube(root, "Slot front line " + z, new Vector3(-0.65f, LineY, endZ), Quaternion.identity, new Vector3(count * 3.1f, LineHeight, 0.11f), lines, false);
         }
 
         private static void DrawSlotLine(Transform root, Material lines, Vector3 position, Quaternion rotation, float length)
         {
-            Cube(root, "Angled slot line", position, rotation, new Vector3(0.08f, 0.02f, length), lines, false);
+            Vector3 raisedPosition = new Vector3(position.x, LineY, position.z);
+            Cube(root, "Angled slot line", raisedPosition, rotation, new Vector3(0.12f, LineHeight, length), lines, false);
         }
 
         private static GameObject CreateParkedCar(Transform root, string objectName, Vector3 position, Quaternion rotation, Material material, VehicleDimensions dimensions)
         {
+            Cube(root, objectName + " soft shadow", new Vector3(position.x + 0.18f, 0.015f, position.z - 0.18f), rotation, new Vector3(dimensions.Width * 0.9f, 0.018f, dimensions.Length * 0.95f), GetShadowMaterial(), false);
             GameObject car = Cube(root, objectName, position, rotation, new Vector3(dimensions.Width * 0.82f, 0.7f, dimensions.Length * 0.88f), material, true);
             Cube(car.transform, "roof", new Vector3(0f, 0.48f, 0f), Quaternion.identity, new Vector3(dimensions.Width * 0.62f, 0.42f, dimensions.Length * 0.38f), material, false);
             return car;
+        }
+
+        private static Material GetShadowMaterial()
+        {
+            if (shadowMaterial == null)
+            {
+                shadowMaterial = NewRuntimeMaterial("SoftShadow", new Color(0.025f, 0.028f, 0.028f));
+            }
+
+            return shadowMaterial;
         }
 
         private static void BuildCarVisual(Transform root, VehicleDimensions dimensions, Material bodyMaterial, bool brightDetails)
