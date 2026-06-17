@@ -492,9 +492,9 @@ namespace AutoParking
             }
 
             sceneCamera.orthographic = true;
-            sceneCamera.orthographicSize = size * 0.74f;
-            Vector3 focus = new Vector3(position.x, 0f, position.z - 1.4f);
-            sceneCamera.transform.position = focus + new Vector3(0f, size * 1.55f, -size * 0.28f);
+            sceneCamera.orthographicSize = size * 0.82f;
+            Vector3 focus = new Vector3(position.x, 0f, position.z - 0.6f);
+            sceneCamera.transform.position = focus + new Vector3(0f, size * 1.8f, -size * 0.07f);
             sceneCamera.transform.LookAt(focus);
             sceneCamera.useOcclusionCulling = false;
             sceneCamera.nearClipPlane = 0.1f;
@@ -520,8 +520,8 @@ namespace AutoParking
     public static class ParkingEnvironmentBuilder
     {
         private const float GroundY = -0.05f;
-        private const float LineY = 0.065f;
-        private const float LineHeight = 0.045f;
+        private const float LineY = 0.11f;
+        private const float LineHeight = 0.08f;
         private static Material shadowMaterial;
 
         public static ParkingProfile BuildPerpendicularMap(
@@ -612,7 +612,7 @@ namespace AutoParking
 
             for (int i = 0; i < 22; i++)
             {
-                Cube(root, "Center dash " + i, new Vector3(-21f + i * 2f, LineY, 1.55f), Quaternion.identity, new Vector3(1f, LineHeight, 0.07f), lines, false);
+                Cube(root, "Center dash " + i, new Vector3(-21f + i * 2f, LineY, 1.55f), Quaternion.identity, new Vector3(1f, LineHeight, 0.09f), lines, false);
             }
 
             Vector3 parallelTargetPosition = new Vector3(9.6f, 0.05f, -3.05f);
@@ -742,17 +742,17 @@ namespace AutoParking
             float startX = -13.05f;
             for (int i = 0; i <= count; i++)
             {
-                Cube(root, "Slot separator " + z + " " + i, new Vector3(startX + i * 3.1f, LineY, z), Quaternion.identity, new Vector3(0.11f, LineHeight, 5.4f), lines, false);
+                Cube(root, "Slot separator " + z + " " + i, new Vector3(startX + i * 3.1f, LineY, z), Quaternion.identity, new Vector3(0.14f, LineHeight, 5.4f), lines, false);
             }
 
             float endZ = south ? -3.3f : 3.3f;
-            Cube(root, "Slot front line " + z, new Vector3(-0.65f, LineY, endZ), Quaternion.identity, new Vector3(count * 3.1f, LineHeight, 0.11f), lines, false);
+            Cube(root, "Slot front line " + z, new Vector3(-0.65f, LineY, endZ), Quaternion.identity, new Vector3(count * 3.1f, LineHeight, 0.14f), lines, false);
         }
 
         private static void DrawSlotLine(Transform root, Material lines, Vector3 position, Quaternion rotation, float length)
         {
             Vector3 raisedPosition = new Vector3(position.x, LineY, position.z);
-            Cube(root, "Angled slot line", raisedPosition, rotation, new Vector3(0.12f, LineHeight, length), lines, false);
+            Cube(root, "Angled slot line", raisedPosition, rotation, new Vector3(0.16f, LineHeight, length), lines, false);
         }
 
         private static GameObject CreateParkedCar(Transform root, string objectName, Vector3 position, Quaternion rotation, Material material, VehicleDimensions dimensions)
