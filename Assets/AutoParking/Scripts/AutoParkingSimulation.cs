@@ -441,15 +441,36 @@ namespace AutoParking
 
         private static Material NewMaterial(string materialName, Color color)
         {
-            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
-            if (shader == null)
-            {
-                shader = Shader.Find("Standard");
-            }
-
-            Material material = new Material(shader) { name = materialName };
+            Material material = CreateSafeMaterial(materialName);
             material.color = color;
             return material;
+        }
+
+        private static Material CreateSafeMaterial(string materialName)
+        {
+            Shader shader =
+                Shader.Find("Universal Render Pipeline/Lit") ??
+                Shader.Find("Universal Render Pipeline/Unlit") ??
+                Shader.Find("Sprites/Default") ??
+                Shader.Find("Standard");
+
+            if (shader != null)
+            {
+                return new Material(shader) { name = materialName };
+            }
+
+            Material builtInMaterial =
+                Resources.GetBuiltinResource<Material>("Default-Material.mat") ??
+                Resources.GetBuiltinResource<Material>("Default-Diffuse.mat");
+
+            if (builtInMaterial != null)
+            {
+                Material copy = UnityEngine.Object.Instantiate(builtInMaterial);
+                copy.name = materialName;
+                return copy;
+            }
+
+            return new Material(Shader.Find("Hidden/InternalErrorShader")) { name = materialName };
         }
 
         private void ConfigureCamera(Vector3 position, float size)
@@ -818,15 +839,36 @@ namespace AutoParking
 
         private static Material NewRuntimeMaterial(string materialName, Color color)
         {
-            Shader shader = Shader.Find("Universal Render Pipeline/Lit");
-            if (shader == null)
-            {
-                shader = Shader.Find("Standard");
-            }
-
-            Material material = new Material(shader) { name = materialName };
+            Material material = CreateSafeMaterial(materialName);
             material.color = color;
             return material;
+        }
+
+        private static Material CreateSafeMaterial(string materialName)
+        {
+            Shader shader =
+                Shader.Find("Universal Render Pipeline/Lit") ??
+                Shader.Find("Universal Render Pipeline/Unlit") ??
+                Shader.Find("Sprites/Default") ??
+                Shader.Find("Standard");
+
+            if (shader != null)
+            {
+                return new Material(shader) { name = materialName };
+            }
+
+            Material builtInMaterial =
+                Resources.GetBuiltinResource<Material>("Default-Material.mat") ??
+                Resources.GetBuiltinResource<Material>("Default-Diffuse.mat");
+
+            if (builtInMaterial != null)
+            {
+                Material copy = UnityEngine.Object.Instantiate(builtInMaterial);
+                copy.name = materialName;
+                return copy;
+            }
+
+            return new Material(Shader.Find("Hidden/InternalErrorShader")) { name = materialName };
         }
     }
 
