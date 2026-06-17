@@ -239,7 +239,7 @@ namespace AutoParking
             canvas.sortingOrder = 100;
             CanvasScaler scaler = canvasObject.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-            scaler.referenceResolution = new Vector2(1920f, 1080f);
+            scaler.referenceResolution = new Vector2(1280f, 720f);
             canvasObject.AddComponent<GraphicRaycaster>();
 
             GameObject panel = new GameObject("Control Panel");
@@ -248,24 +248,24 @@ namespace AutoParking
             panelRect.anchorMin = new Vector2(0f, 1f);
             panelRect.anchorMax = new Vector2(0f, 1f);
             panelRect.pivot = new Vector2(0f, 1f);
-            panelRect.anchoredPosition = new Vector2(10f, -10f);
-            panelRect.sizeDelta = new Vector2(330f, 225f);
+            panelRect.anchoredPosition = new Vector2(12f, -12f);
+            panelRect.sizeDelta = new Vector2(390f, 250f);
             Image panelImage = panel.AddComponent<Image>();
             panelImage.color = new Color(0.04f, 0.04f, 0.04f, 0.78f);
 
             VerticalLayoutGroup layout = panel.AddComponent<VerticalLayoutGroup>();
-            layout.padding = new RectOffset(9, 9, 7, 7);
-            layout.spacing = 4f;
+            layout.padding = new RectOffset(10, 10, 8, 8);
+            layout.spacing = 5f;
             layout.childControlWidth = true;
             layout.childControlHeight = false;
             layout.childForceExpandWidth = true;
             layout.childForceExpandHeight = false;
 
-            stateText = CreateLabel(panel.transform, "Auto Parking - deterministic FSM", 14, FontStyle.Bold);
-            sensorText = CreateLabel(panel.transform, "Side clear: -", 12, FontStyle.Normal);
-            candidateText = CreateLabel(panel.transform, "Candidate: -", 12, FontStyle.Normal);
-            speedText = CreateLabel(panel.transform, "Speed: -", 12, FontStyle.Normal);
-            collisionText = CreateLabel(panel.transform, string.Empty, 12, FontStyle.Normal);
+            stateText = CreateLabel(panel.transform, "Auto Parking - deterministic FSM", 16, FontStyle.Bold);
+            sensorText = CreateLabel(panel.transform, "Side clear: -", 13, FontStyle.Normal);
+            candidateText = CreateLabel(panel.transform, "Candidate: -", 13, FontStyle.Normal);
+            speedText = CreateLabel(panel.transform, "Speed: -", 13, FontStyle.Normal);
+            collisionText = CreateLabel(panel.transform, string.Empty, 13, FontStyle.Normal);
 
             CreateButton(panel.transform, "Mapa 1 - parking prostopadly", () => BuildScenario(ParkingScenario.Perpendicular));
             CreateButton(panel.transform, "Mapa 2 - parkowanie rownolegle", () => BuildScenario(ParkingScenario.Parallel));
@@ -287,7 +287,7 @@ namespace AutoParking
             uiText.verticalOverflow = VerticalWrapMode.Overflow;
 
             RectTransform rect = label.GetComponent<RectTransform>();
-            float height = style == FontStyle.Bold ? 38f : fontSize + 8f;
+            float height = style == FontStyle.Bold ? 40f : fontSize + 9f;
             rect.sizeDelta = new Vector2(0f, height);
             LayoutElement layoutElement = label.AddComponent<LayoutElement>();
             layoutElement.preferredHeight = height;
@@ -305,9 +305,9 @@ namespace AutoParking
             button.onClick.AddListener(onClick);
 
             RectTransform rect = buttonObject.GetComponent<RectTransform>();
-            rect.sizeDelta = new Vector2(0f, 22f);
+            rect.sizeDelta = new Vector2(0f, 24f);
             LayoutElement layoutElement = buttonObject.AddComponent<LayoutElement>();
-            layoutElement.preferredHeight = 22f;
+            layoutElement.preferredHeight = 24f;
 
             GameObject textObject = new GameObject("Text");
             textObject.transform.SetParent(buttonObject.transform, false);
@@ -319,7 +319,7 @@ namespace AutoParking
 
             Text text = textObject.AddComponent<Text>();
             text.font = GetUiFont();
-            text.fontSize = 12;
+            text.fontSize = 14;
             text.alignment = TextAnchor.MiddleCenter;
             text.color = Color.white;
             text.text = label;
@@ -491,13 +491,13 @@ namespace AutoParking
                 }
             }
 
-            Vector3 focus = new Vector3(position.x, 0f, position.z);
-            sceneCamera.orthographic = false;
-            sceneCamera.fieldOfView = 36f;
-            sceneCamera.transform.position = focus + new Vector3(0f, size * 1.15f, -size * 1.12f);
-            sceneCamera.transform.LookAt(focus);
+            sceneCamera.orthographic = true;
+            sceneCamera.orthographicSize = size * 0.56f;
+            sceneCamera.transform.position = new Vector3(position.x, size, position.z);
+            sceneCamera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+            sceneCamera.useOcclusionCulling = false;
             sceneCamera.nearClipPlane = 0.1f;
-            sceneCamera.farClipPlane = 220f;
+            sceneCamera.farClipPlane = 100f;
         }
 
         private static void EnsureLight()
@@ -758,26 +758,8 @@ namespace AutoParking
 
         private static void BuildCarVisual(Transform root, VehicleDimensions dimensions, Material bodyMaterial, bool brightDetails)
         {
-            Material glass = NewRuntimeMaterial("CarGlass", brightDetails ? new Color(0.24f, 0.38f, 0.48f) : new Color(0.08f, 0.11f, 0.13f));
-            Material tire = NewRuntimeMaterial("CarTire", Color.black);
-            Material headLight = NewRuntimeMaterial("HeadLight", new Color(1f, 0.95f, 0.72f));
-            Material tailLight = NewRuntimeMaterial("TailLight", new Color(0.8f, 0.04f, 0.02f));
-
-            Cube(root, "Car body", new Vector3(0f, 0.48f, 0f), Quaternion.identity, new Vector3(dimensions.Width, 0.72f, dimensions.Length), bodyMaterial, false);
-            Cube(root, "Car cabin", new Vector3(0f, 0.95f, -0.12f), Quaternion.identity, new Vector3(dimensions.Width * 0.68f, 0.42f, dimensions.Length * 0.42f), bodyMaterial, false);
-            Cube(root, "Front glass", new Vector3(0f, 1.18f, dimensions.Length * 0.09f), Quaternion.identity, new Vector3(dimensions.Width * 0.52f, 0.08f, dimensions.Length * 0.18f), glass, false);
-            Cube(root, "Rear glass", new Vector3(0f, 1.18f, -dimensions.Length * 0.29f), Quaternion.identity, new Vector3(dimensions.Width * 0.5f, 0.08f, dimensions.Length * 0.13f), glass, false);
-
-            float lampZ = dimensions.Length * 0.51f;
-            Cube(root, "Headlights", new Vector3(0f, 0.58f, lampZ), Quaternion.identity, new Vector3(dimensions.Width * 0.62f, 0.12f, 0.06f), headLight, false);
-            Cube(root, "Tail lights", new Vector3(0f, 0.58f, -lampZ), Quaternion.identity, new Vector3(dimensions.Width * 0.62f, 0.12f, 0.06f), tailLight, false);
-
-            float wheelZ = dimensions.WheelBase * 0.5f;
-            float wheelX = dimensions.TrackWidth * 0.5f;
-            Wheel(root, "Visual wheel FL", new Vector3(-wheelX, 0.25f, wheelZ), tire);
-            Wheel(root, "Visual wheel FR", new Vector3(wheelX, 0.25f, wheelZ), tire);
-            Wheel(root, "Visual wheel RL", new Vector3(-wheelX, 0.25f, -wheelZ), tire);
-            Wheel(root, "Visual wheel RR", new Vector3(wheelX, 0.25f, -wheelZ), tire);
+            Cube(root, "Car body", new Vector3(0f, 0.42f, 0f), Quaternion.identity, new Vector3(dimensions.Width, 0.72f, dimensions.Length), bodyMaterial, false);
+            Cube(root, "Car cabin", new Vector3(0f, 0.9f, -0.15f), Quaternion.identity, new Vector3(dimensions.Width * 0.72f, 0.42f, dimensions.Length * 0.42f), bodyMaterial, false);
         }
 
         private static GameObject Cube(Transform root, string objectName, Vector3 position, Quaternion rotation, Vector3 scale, Material material, bool colliderEnabled)
